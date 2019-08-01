@@ -1,3 +1,5 @@
+import numpy as np
+import rasterio
 
 # https://github.com/radiantearth/stac-spec/tree/master/extensions/eo#common-band-names
 BAND_NAMES = [
@@ -5,6 +7,7 @@ BAND_NAMES = [
     "blue",
     "green",
     "red",
+    "redge",
     "pan",
     "nir",
     "cirrus",
@@ -13,6 +16,10 @@ BAND_NAMES = [
     "lwir12",
     "lwir22"
 ]
+
+# TODO: Fix np.seterr, it isn't working propertly for some reason
+# np.seterr(divide='ignore', invalid='ignore')
+
 
 class BandError(Exception):
     pass
@@ -39,7 +46,6 @@ class StacItem(object):
         self.load_bands()
 
     def load_bands(self):
-        # Load assets
         for asset in self.item['assets']:
             try:
                 band_name = self.item['assets'][asset]['common_name']
@@ -48,6 +54,26 @@ class StacItem(object):
             except KeyError:
                 pass
 
+    def read_band(self, band, profile=False):
+        with rasterio.open(getattr(self, band)['href']) as src:
+            if profile:
+                return [src.read(1).astype(float), profile]
+            return src.read(1).astype(float)
+
     @requirements(["red", "nir"])
     def ndvi(self):
-        print("inside ndvi")
+        red, profile = self.read_band('red', profile=True)
+        nir = self.read_band('nir')
+        num = nir - red
+        den = (nir + red) + 0.00000000001
+        ndvi = np.divide(num, den)
+        return ndvi
+
+    @requirements(["redge", "nir"])
+    def ndre(self):
+        redge, profile = self.read_band('rededge', profile=True)
+        nir = self.read_band('nir')
+        num = nir - redge
+        den = (nir + redge) + 0.00000000001
+        ndre = np.divide(num, den)
+        return ndre
