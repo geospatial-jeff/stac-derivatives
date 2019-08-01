@@ -43,5 +43,5 @@ class StacItem(object):
     def read_band(self, band, profile=False):
         with rasterio.open(getattr(self, band)['href']) as src:
             if profile:
-                return [src.read(1).astype(float), profile]
-            return src.read(1).astype(float)
+                return [src.read().astype('float32'), src.profile]
+            return src.read().astype('float32')
