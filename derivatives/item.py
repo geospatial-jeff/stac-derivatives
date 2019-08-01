@@ -1,7 +1,3 @@
-from functools import wraps
-import json
-import numpy as np
-import rasterio
 
 # https://github.com/radiantearth/stac-spec/tree/master/extensions/eo#common-band-names
 BAND_NAMES = [
@@ -55,10 +51,3 @@ class StacItem(object):
     @requirements(["red", "nir"])
     def ndvi(self):
         print("inside ndvi")
-
-
-
-with open('../ls8_item.json') as f:
-    data = json.load(f)
-    item = StacItem(data)
-    print(item.ndvi())
