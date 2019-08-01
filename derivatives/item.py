@@ -18,6 +18,7 @@ BAND_NAMES = [
 ]
 
 # TODO: Fix np.seterr, it isn't working propertly for some reason
+# Current workaround is to add 0.0000001 to the denominators to prevent divide by 0 error.
 # np.seterr(divide='ignore', invalid='ignore')
 
 class StacItem(object):
