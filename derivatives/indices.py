@@ -2,6 +2,7 @@ import numpy as np
 
 from derivatives.item import StacItem
 from derivatives.utils import get_methods
+from derivatives.outputs import Outputs
 
 
 class BandError(Exception):
@@ -23,9 +24,7 @@ def requirements(bands):
         return wrapped_f
     return wrapper
 
-
 class StacIndices(StacItem):
-
 
     def __init__(self, item):
         super().__init__(item)
@@ -42,17 +41,19 @@ class StacIndices(StacItem):
     @requirements(["red", "nir"])
     def ndvi(self):
         red, profile = self.read_band('red', profile=True)
+        profile['dtype'] = 'float32'
         nir = self.read_band('nir')
         num = nir - red
         den = (nir + red) + 0.00000000001
         ndvi = np.divide(num, den)
-        return ndvi
+        return Outputs(ndvi, profile)
 
     @requirements(["redge", "nir"])
     def ndre(self):
         redge, profile = self.read_band('rededge', profile=True)
+        profile['dtype'] = 'float32'
         nir = self.read_band('nir')
         num = nir - redge
         den = (nir + redge) + 0.00000000001
         ndre = np.divide(num, den)
-        return ndre
+        return Outputs(ndre, profile)
