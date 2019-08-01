@@ -12,7 +12,7 @@ def requirements(bands):
     def wrapper(f):
         def wrapped_f(self):
             for band in bands:
-                if not hasattr(self, band):
+                if not hasattr(self.bands, band):
                     raise BandError("STAC Item {} is missing the '{}' band which is required for {} ({})".format(
                         self.item['id'],
                         band,
@@ -25,6 +25,8 @@ def requirements(bands):
     return wrapper
 
 class StacIndices(StacItem):
+
+    StacItem.base_methods += ["derivatives"]
 
     def __init__(self, item):
         super().__init__(item)
