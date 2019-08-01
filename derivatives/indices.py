@@ -27,7 +27,8 @@ def requirements(bands):
                         arr, profile = self.read_band(band, profile=True)
                         profile['dtype'] = 'float32'
                         args.update({band: arr, 'profile': profile})
-                    args.update({band: self.read_band(band).astype('float32')})
+                    else:
+                        args.update({band: self.read_band(band).astype('float32')})
             return f(self, **args)
         wrapped_f.bands = bands
         return wrapped_f
