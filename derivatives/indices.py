@@ -44,7 +44,7 @@ class StacIndices(StacItem):
         profile['dtype'] = 'float32'
         nir = self.read_band('nir')
         num = nir - red
-        den = (nir + red) + 0.00000000001
+        den = (nir + red) + 0.0000001
         ndvi = np.divide(num, den)
         return Outputs(ndvi, profile)
 
@@ -54,6 +54,6 @@ class StacIndices(StacItem):
         profile['dtype'] = 'float32'
         nir = self.read_band('nir')
         num = nir - redge
-        den = (nir + redge) + 0.00000000001
+        den = (nir + redge) + 0.0000001
         ndre = np.divide(num, den)
         return Outputs(ndre, profile)
