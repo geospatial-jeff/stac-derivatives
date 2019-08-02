@@ -16,7 +16,7 @@ def requirements(bands):
                 # Make sure STAC Item has all required bands to create the indice
                 if not hasattr(self.bands, band):
                     raise BandError("STAC Item {} is missing the '{}' band which is required for {} ({})".format(
-                        self.item['id'],
+                        self.item.id,
                         band,
                         f.__name__,
                         bands

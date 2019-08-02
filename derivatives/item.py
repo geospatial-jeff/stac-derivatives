@@ -25,24 +25,23 @@ BAND_NAMES = [
 
 class StacItem(object):
 
-    base_methods = ["__init__", "eobands", "load_bands", "read_band"]
+    base_methods = ["__init__", "load_item", "load_bands", "read_band"]
+
+    @staticmethod
+    def load_item(item):
+        if type(item) == Item:
+            return item
+        elif type(item) == str:
+            if item.startswith('http'):
+                return Item.open(item)
+        elif type(item) == dict:
+            return Item(item)
+        else:
+            raise TypeError("Invalid input encountered.")
 
     def __init__(self, item):
-        self.item = item
+        self.item = self.load_item(item)
         self.bands = self.load_bands()
-
-    def eobands(self):
-        try:
-            return self.item['properties']['eo:bands']
-        except KeyError:
-            # eo:bands is often stored at collection level (commons)
-            item = Item(self.item)
-            col_link = item.links('collection')[0]
-            if '..' in col_link:
-                col = Collection.open(urljoin(item.links('self')[0], col_link))
-            else:
-                col = Collection.open(col_link)
-            return col.properties['eo:bands']
 
     def read_band(self, band, profile=False):
         band = getattr(self.bands, band)
@@ -55,20 +54,17 @@ class StacItem(object):
                 return [arr, src.profile]
             else:
                 return arr
-            # if profile:
-            #     return [src.read().astype('float32'), src.profile]
-            # return src.read().astype('float32')
 
     def load_bands(self):
-        bands = self.eobands()
+        bands = self.item.eobands
         band_list = [x['common_name'] for x in bands if 'common_name' in x]
         band_stack = BandStack()
         # Using eo:bands to look up band information about each asset
-        for asset in self.item['assets']:
+        for asset in self.item.assets:
             try:
-                band_indices = self.item['assets'][asset]['eo:bands']
+                band_indices = self.item.assets[asset]['eo:bands']
                 for i, idx in enumerate(band_indices):
-                    band = Band(bands[idx], self.item['assets'][asset], i+1, len(band_indices))
+                    band = Band(bands[idx], self.item.assets[asset], i+1, len(band_indices))
                     if band.common_name in BAND_NAMES:
                         setattr(band_stack, band.common_name, band)
             except:
@@ -98,4 +94,3 @@ class Band(object):
     def array(self, arr):
         # Used for caching the array when calculating multiple indices within a single instance
         self.__array = arr
-

@@ -15,7 +15,6 @@ class Outputs(object):
         return self.arr
 
     def to_gtiff(self, outfile):
-        print(self.profile)
         with rasterio.open(outfile, 'w', **self.profile) as dst:
             dst.write(self.arr)
 
