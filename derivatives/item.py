@@ -15,8 +15,8 @@ BAND_NAMES = [
     "cirrus",
     "swir16",
     "swir22",
-    "lwir12",
-    "lwir22"
+    "lwir11",
+    "lwir12"
 ]
 
 # TODO: Fix np.seterr, it isn't working propertly for some reason
