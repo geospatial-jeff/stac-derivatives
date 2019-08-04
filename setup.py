@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-with open('./requirements.txt') as reqs:
+with open('./requirements-dev.txt') as reqs:
     requirements = [line.rstrip() for line in reqs]
 
 setup(name="STAC Derivatives",
