@@ -12,3 +12,6 @@ provider:
       Resource: arn:Aws:S3:::*
 
 functions:
+
+package:
+  artifact: lambda-deploy.zip
