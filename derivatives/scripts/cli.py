@@ -8,6 +8,7 @@ import yaml
 
 sls_template_path = os.path.join(os.path.dirname(__file__), '..', '..', 'serverless_template.yml')
 sls_config_path = os.path.join(os.path.dirname(__file__), '..', '..', 'serverless.yml')
+rasterio_layer_arn = "arn:aws:lambda:us-east-1:725820063953:layer:rasterio:2"
 
 @click.group()
 def stac_derivatives():
@@ -29,7 +30,8 @@ def indices(name):
                 "handler": "lambda.ndvi",
                 "environment": {
                     "INDICE_NAME": indice
-                }
+                },
+                "layer": rasterio_layer_arn
             }
 
             if not hasattr(StacIndices, indice):
@@ -43,8 +45,6 @@ def indices(name):
                 config['functions'].update({
                     f'stacDerivatives_{indice}': lambda_func
                 })
-
         # https://github.com/vincentsarago/lambda-pyskel/blob/master/lambda_pyskel/scripts/cli.py
         f.seek(0)
         f.write(yaml.dump(config, default_flow_style=False))
-
