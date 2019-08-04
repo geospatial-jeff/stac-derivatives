@@ -1,5 +1,7 @@
 import os
+import subprocess
 import shutil
+
 
 from derivatives import StacIndices
 
@@ -27,11 +29,13 @@ def indices(name):
         for indice in name:
             indice = indice.lower()
             lambda_func = {
-                "handler": "lambda.ndvi",
+                "handler": "handler.indices",
                 "environment": {
                     "INDICE_NAME": indice
                 },
-                "layer": rasterio_layer_arn
+                "layers": [rasterio_layer_arn],
+                "timeout": 150,
+                "memorySize": 1536
             }
 
             if not hasattr(StacIndices, indice):
@@ -48,3 +52,9 @@ def indices(name):
         # https://github.com/vincentsarago/lambda-pyskel/blob/master/lambda_pyskel/scripts/cli.py
         f.seek(0)
         f.write(yaml.dump(config, default_flow_style=False))
+
+@stac_derivatives.command(name='deploy', short_help="deploy service to aws.")
+def deploy():
+    subprocess.call("docker build . -t stac-derivatives:latest", shell=True)
+    subprocess.call("docker run --rm -v $PWD:/home/stac_derivatives -it stac-derivatives:latest package-service.sh", shell=True)
+    subprocess.call("sls deploy -v", shell=True)
