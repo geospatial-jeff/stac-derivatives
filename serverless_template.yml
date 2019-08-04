@@ -1,0 +1,14 @@
+service: stac-derivatives
+
+provider:
+  name: aws
+  runtime: python3.6
+  stage: dev
+  iamRoleStatementsName: ${self:Service}-role
+  iamRoleStatements:
+    - Action:
+        - s3:*
+      Effect: Allow
+      Resource: arn:Aws:S3:::*
+
+functions:
