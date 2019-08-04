@@ -25,7 +25,7 @@ BAND_NAMES = [
 
 class StacItem(object):
 
-    base_methods = ["__init__", "load_item", "load_bands", "read_band"]
+    base_methods = ["__init__", "load_item", "load_bands", "read_band", "get_asset_by_name"]
 
     @staticmethod
     def load_item(item):
@@ -72,6 +72,9 @@ class StacItem(object):
 
         self.bandlist = band_list
         return band_stack
+
+    def get_asset_by_name(self, name):
+        return self.item.asset(name)
 
 class BandStack(object):
     pass
