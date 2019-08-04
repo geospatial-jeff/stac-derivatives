@@ -4,12 +4,14 @@ provider:
   name: aws
   runtime: python3.6
   stage: dev
-  iamRoleStatementsName: ${self:Service}-role
+  region: us-east-1
+  iamRoleStatementsName: ${self:service}-role
   iamRoleStatements:
     - Action:
         - s3:*
       Effect: Allow
-      Resource: arn:Aws:S3:::*
+      Resource:
+        - arn:aws:s3:::*
 
 functions:
 
